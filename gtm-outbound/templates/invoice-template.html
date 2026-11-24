@@ -1,0 +1,186 @@
+<title>Invoice {{INVOICE_NUMBER}}</title>
+<style>
+  :root {
+    --navy: #1E2A3A;
+    --ink: #24303F;
+    --ink-soft: #55637A;
+    --ink-faint: #8A96A8;
+    --ground: #FFFFFF;
+    --line: #E3E8EF;
+    --orange: #E8501F;
+    --orange-soft: #FDEEE7;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font: 13.5px/1.5 "Helvetica Neue", Arial, "Segoe UI", system-ui, sans-serif; }
+  .sheet { max-width: 820px; margin: 0 auto; padding-bottom: 20px; }
+  .pad { padding: 0 44px; }
+  @media (max-width: 560px) { .pad { padding: 0 20px; } }
+
+  .top-strip { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 5px 20px; padding: 18px 44px 10px; }
+  @media (max-width: 560px) { .top-strip { padding: 18px 20px 10px; } }
+  .top-strip .brand { font-size: 13px; font-weight: 800; letter-spacing: .04em; color: var(--navy); text-transform: uppercase; }
+  .top-strip .inv-label { font-size: 22px; font-weight: 800; letter-spacing: .02em; color: var(--orange); text-transform: uppercase; }
+  .rule-thick { height: 3px; background: var(--orange); }
+
+  .header-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; padding: 20px 44px 0; }
+  @media (max-width: 560px) { .header-row { padding: 16px 20px 0; } }
+
+  .from-block, .to-block { flex: 1; min-width: 220px; }
+  .block-label { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 4px; }
+  .block-name { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .block-line { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+
+  .inv-details { display: flex; flex-wrap: wrap; gap: 0 32px; padding: 20px 44px 0; }
+  @media (max-width: 560px) { .inv-details { padding: 16px 20px 0; } }
+  .inv-detail { margin-bottom: 6px; }
+  .inv-detail .label { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); }
+  .inv-detail .value { font-size: 13px; font-weight: 700; color: var(--navy); }
+
+  .line-items { margin: 24px 44px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  @media (max-width: 560px) { .line-items { margin: 20px 20px 0; } }
+  .li-header { display: flex; background: var(--navy); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 8px 16px; }
+  .li-row { display: flex; padding: 12px 16px; border-bottom: 1px solid var(--line); align-items: center; }
+  .li-row:last-child { border-bottom: none; }
+  .li-desc { flex: 1; }
+  .li-desc .item-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .li-desc .item-detail { font-size: 11.5px; color: var(--ink-soft); }
+  .li-qty { width: 60px; text-align: center; font-size: 13px; color: var(--ink-soft); }
+  .li-rate { width: 100px; text-align: right; font-size: 13px; color: var(--ink-soft); }
+  .li-amount { width: 110px; text-align: right; font-size: 13px; font-weight: 700; color: var(--ink); }
+  .li-header .li-desc { color: #fff; font-size: 10px; }
+  .li-header .li-qty, .li-header .li-rate, .li-header .li-amount { color: #fff; font-size: 10px; }
+
+  .totals { margin: 0 44px; border: 1px solid var(--line); border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+  @media (max-width: 560px) { .totals { margin: 0 20px; } }
+  .total-row { display: flex; justify-content: flex-end; padding: 8px 16px; gap: 20px; border-bottom: 1px solid var(--line); }
+  .total-row:last-child { border-bottom: none; }
+  .total-row.grand { background: var(--orange-soft); border-top: 2px solid var(--orange); }
+  .total-label { font-size: 12px; color: var(--ink-soft); font-weight: 600; width: 120px; text-align: right; }
+  .total-value { font-size: 13px; font-weight: 700; color: var(--ink); width: 110px; text-align: right; }
+  .total-row.grand .total-label { color: var(--orange); font-weight: 700; font-size: 13px; }
+  .total-row.grand .total-value { color: var(--orange); font-size: 15px; font-weight: 800; }
+
+  .notes { margin: 24px 44px 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; border-left: 3px solid var(--orange); background: var(--orange-soft); }
+  @media (max-width: 560px) { .notes { margin: 20px 20px 0; } }
+  .notes-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--orange); margin-bottom: 4px; }
+  .notes p { margin: 0 0 4px; font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+  .notes p:last-child { margin-bottom: 0; }
+
+  .footer-line { margin-top: 28px; padding: 10px 44px 0; border-top: 2px solid var(--line); }
+  @media (max-width: 560px) { .footer-line { padding: 10px 20px 0; } }
+  .footer-line p { font-size: 10px; color: var(--ink-faint); margin: 0; text-align: center; }
+</style>
+
+<!--
+  A305 INVOICE TEMPLATE
+  =====================
+  Replace {{PLACEHOLDERS}} for each new invoice:
+
+  {{INVOICE_NUMBER}}    e.g. A305-002
+  {{INVOICE_DATE}}      e.g. December 23, 2026
+  {{DUE_DATE}}          e.g. December 30, 2026
+  {{PERIOD_START}}      e.g. Dec 23
+  {{PERIOD_END}}        e.g. Jan 22, 2027
+
+  For qualified meetings, duplicate the li-row block and update:
+  - Item name: "Qualified Meetings"
+  - Detail: "X meetings held during invoice period"
+  - Qty: number of meetings
+  - Rate: $300.00
+  - Amount: total
+
+  Update subtotal and amount due accordingly.
+-->
+
+<div class="sheet">
+  <div class="top-strip">
+    <span class="brand">A305</span>
+    <span class="inv-label">Invoice</span>
+  </div>
+  <div class="rule-thick"></div>
+
+  <div class="header-row">
+    <div class="from-block">
+      <div class="block-label">From</div>
+      <div class="block-name">Camilo Gonzalez / Automate305</div>
+      <div class="block-line">12864 Biscayne Blvd., PMB #2203</div>
+      <div class="block-line">North Miami, FL 33181</div>
+      <div class="block-line">(305) 615-5199</div>
+    </div>
+    <div class="to-block">
+      <div class="block-label">Bill To</div>
+      <div class="block-name">FusionAuth</div>
+      <div class="block-line">Attn: Accounts Payable</div>
+      <div class="block-line">ap@fusionauth.io</div>
+    </div>
+  </div>
+
+  <div class="inv-details">
+    <div class="inv-detail">
+      <div class="label">Invoice No.</div>
+      <div class="value">{{INVOICE_NUMBER}}</div>
+    </div>
+    <div class="inv-detail">
+      <div class="label">Invoice Date</div>
+      <div class="value">{{INVOICE_DATE}}</div>
+    </div>
+    <div class="inv-detail">
+      <div class="label">Due Date</div>
+      <div class="value">{{DUE_DATE}}</div>
+    </div>
+    <div class="inv-detail">
+      <div class="label">Terms</div>
+      <div class="value">Net 7</div>
+    </div>
+  </div>
+
+  <div class="line-items">
+    <div class="li-header">
+      <div class="li-desc">Description</div>
+      <div class="li-qty">Qty</div>
+      <div class="li-rate">Rate</div>
+      <div class="li-amount">Amount</div>
+    </div>
+    <div class="li-row">
+      <div class="li-desc">
+        <div class="item-name">Monthly Retainer</div>
+        <div class="item-detail">Outbound engagement, fractional BDR services ({{PERIOD_START}} - {{PERIOD_END}})</div>
+      </div>
+      <div class="li-qty">1</div>
+      <div class="li-rate">$3,500.00</div>
+      <div class="li-amount">$3,500.00</div>
+    </div>
+    <!-- QUALIFIED MEETINGS: uncomment and update when applicable
+    <div class="li-row">
+      <div class="li-desc">
+        <div class="item-name">Qualified Meetings</div>
+        <div class="item-detail">X meetings held during invoice period</div>
+      </div>
+      <div class="li-qty">X</div>
+      <div class="li-rate">$300.00</div>
+      <div class="li-amount">$X,XXX.00</div>
+    </div>
+    -->
+  </div>
+
+  <div class="totals">
+    <div class="total-row">
+      <div class="total-label">Subtotal</div>
+      <div class="total-value">$3,500.00</div>
+    </div>
+    <div class="total-row grand">
+      <div class="total-label">Amount Due</div>
+      <div class="total-value">$3,500.00</div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="notes-label">Notes</div>
+    <p>Thank you for your business.</p>
+  </div>
+
+  <div class="footer-line">
+    <p>Camilo Gonzalez / Automate305 &middot; 12864 Biscayne Blvd., PMB #2203, North Miami, FL 33181 &middot; (305) 615-5199</p>
+  </div>
+</div>
